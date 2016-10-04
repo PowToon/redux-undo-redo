@@ -12,20 +12,20 @@ export default function undoHistoryReducer(state=INITIAL_UNDO_HISTORY_STATE, act
     {
       return (undoQueue.length == 0) ? state : {
         undoQueue: undoQueue.slice(1),
-        redoQueue: [...redoQueue, undoQueue[0]]
+        redoQueue: [undoQueue[0], ...redoQueue]
       }
     }
   case 'UNDO_HISTORY@REDO':
     {
       return (redoQueue.length == 0) ? state : {
-        undoQueue: [...undoQueue, redoQueue[0]],
+        undoQueue: [redoQueue[0], ...undoQueue],
         redoQueue: redoQueue.slice(1)
       }
     }
   case 'UNDO_HISTORY@ADD':
     {
       return {
-        undoQueue: [...undoQueue, payload],
+        undoQueue: [payload, ...undoQueue],
         redoQueue: []
       }
     }
