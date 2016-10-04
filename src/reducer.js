@@ -3,7 +3,7 @@ const INITIAL_UNDO_HISTORY_STATE = {
   redoQueue: []
 }
 
-export function undoHistoryReducer(state=INITIAL_UNDO_HISTORY_STATE, action) {
+export default function undoHistoryReducer(state=INITIAL_UNDO_HISTORY_STATE, action) {
   const {payload, type} = action
   const {undoQueue, redoQueue} = state
 

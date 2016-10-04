@@ -2,7 +2,7 @@ import {get} from 'lodash'
 import {addUndoItem} from './actions'
 import {getUndoItem, getRedoItem} from './selectors'
 
-export function createUndoMiddleware({getViewState, setViewState, revertingActions}) {
+export default function createUndoMiddleware({getViewState, setViewState, revertingActions}) {
 
   const SUPPORTED_ACTIONS = Object.keys(revertingActions)
   let acting = false
