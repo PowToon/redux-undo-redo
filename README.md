@@ -1,6 +1,6 @@
 # redux-undo-redo
 
-This package takes a different approach about implementing undo-redo functionality.
+This package takes a different approach about implementing undo-redo functionality.  
 Instead of setting a reducer to be undoable, we'll define which actions are undoable and define a reverting action.
 
 Pros:
@@ -57,7 +57,7 @@ const undoMiddleware = createUndoMiddleware({
 createUndoMiddleware take a configuration object with the following fields:
 
 ### revertingActions
-this is a map between the `action type` and it's reverting action creator, the action creator gets the `payload` field of the original action.
+this is a map between the `action type` and it's reverting action creator, the action creator gets the `payload` field of the original action.  
 if the `payload` is not enough to create a reverting action, you can provide an object like this:
 ```
 {
@@ -65,14 +65,15 @@ if the `payload` is not enough to create a reverting action, you can provide an 
   meta: (state, payload) => ({somethingElse: state.something})
 }
 ```
-the `meta` function runs before the action happens and collects information needed to revert the action. you get this as a second argument for the reverting action creator.
+the `meta` function runs before the action happens and collects information needed to revert the action.  
+you get this as a second argument for the reverting action creator.
 
 ### getViewState and setViewState
-this to fields are optional
-`getViewState` is a selector like this: `(state) => derivedState`
-`setViewState` is an action creator that gets the result of `getViewState` as an argument: `(viewState) => ({type: 'SET_VIEW_STATE', payload: viewState})`
-**if you define this selector and action** the middleware will save the before and after view state of every undoable action.
-those would be used to dispatch `setViewState` before dispatching the reverting/original action to undo/redo.
+this to fields are optional  
+`getViewState` is a selector like this: `(state) => derivedState`  
+`setViewState` is an action creator that gets the result of `getViewState` as an argument: `(viewState) => ({type: 'SET_VIEW_STATE', payload: viewState})`  
+**if you define this selector and action** the middleware will save the before and after view state of every undoable action.  
+those would be used to dispatch `setViewState` before dispatching the reverting/original action to undo/redo.  
 this is usful the result of the undoable actions depends on another part of the state.
 
 ##TODO:
