@@ -1,96 +1,187 @@
+import {undoHistoryReducer, actions} from '../src'
+
 describe('undoHistoryReducer', function() {
+  describe('UNDO_HISTORY@ADD', function() {
+    it('adds items to the undo queue in reverse order', function() {
+      const initialState = {
+        undoQueue: [],
+        redoQueue: []
+      }
+      const undoableActions = [
+        {type:'ACTION1'},
+        {type:'ACTION2'},
+        {type:'ACTION3'}
+      ]
+      const expectedState = {
+        undoQueue: [
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: []
+      }
+
+      const result = undoableActions.reduce(
+        (state, action) => undoHistoryReducer(state, actions.addUndoItem(action)),
+        initialState)
+
+      expect(result).to.eql(expectedState)
+    })
+
+    it('resets the redo queue', function() {
+      const initialState = {
+        undoQueue: [
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: [
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ]
+      }
+      const action = {type: 'ACTION4'}
+      const expectedState = {
+        undoQueue: [
+          {action: {type:'ACTION4'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: []
+      }
+
+      const result = undoHistoryReducer(initialState, actions.addUndoItem(action))
+
+      expect(result).to.eql(expectedState)
+    })
+  })
+
   describe('UNDO_HISTORY@UNDO', function() {
-    it('removes the first item in the undo queue')
-    it('adds the first item in the undo queue to the redo queue')
-    it('doesnt change redo queue if undo queue is empty')
+    it('removes the first item in the undo queue', function() {
+      const initialState = {
+        undoQueue: [
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: []
+      }
+      const expectedState = {
+        undoQueue: [
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: [
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ]
+      }
+
+      const result = undoHistoryReducer(initialState, actions.undo())
+
+      expect(result).to.eql(expectedState)
+    })
+
+    it('adds the first item in the undo queue to the redo queue', function() {
+      const initialState = {
+        undoQueue: [
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: [
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ]
+      }
+      const expectedState = {
+        undoQueue: [
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: [
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ]
+      }
+
+      const result = undoHistoryReducer(initialState, actions.undo())
+
+      expect(result).to.eql(expectedState)
+    })
+
+    it('doesnt change redo queue if undo queue is empty', function() {
+      const initialState = {
+        undoQueue: [
+        ],
+        redoQueue: [
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ]
+      }
+
+      const result = undoHistoryReducer(initialState, actions.undo())
+
+      expect(result).to.equal(initialState)
+    })
   })
 
   describe('UNDO_HISTORY@REDO', function() {
-    it('removes the first item in the redo queue')
-    it('adds the first item in the redo queue to the undo queue')
-    it('doesnt change undo queue if redo queue is empty')
-  })
+    it('removes the first item in the redo queue', function() {
+      const initialState = {
+        undoQueue: [],
+        redoQueue: [
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ]
+      }
+      const expectedState = {
+        undoQueue: [
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: [
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ]
+      }
 
-  describe('UNDO_HISTORY@ADD', function() {
-    it('adds items to the undo queue in reverse order')
-    it('resets the redo queue')
+      const result = undoHistoryReducer(initialState, actions.redo())
+
+      expect(result).to.eql(expectedState)
+    })
+
+    it('adds the first item in the redo queue to the undo queue', function() {
+      const initialState = {
+        undoQueue: [
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: [
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ]
+      }
+      const expectedState = {
+        undoQueue: [
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION1'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: [
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ]
+      }
+
+      const result = undoHistoryReducer(initialState, actions.redo())
+
+      expect(result).to.eql(expectedState)
+    })
+
+    it('doesnt change undo queue if redo queue is empty', function() {
+      const initialState = {
+        undoQueue: [
+          {action: {type:'ACTION2'}, beforeState: undefined, afterState: undefined, meta: undefined},
+          {action: {type:'ACTION3'}, beforeState: undefined, afterState: undefined, meta: undefined}
+        ],
+        redoQueue: [
+        ]
+      }
+
+      const result = undoHistoryReducer(initialState, actions.redo())
+
+      expect(result).to.equal(initialState)
+    })
   })
 })
-
-// import {take, takeRight, last, first} from 'lodash'
-
-// import { undoHistoryReducer as reducer } from './reducer'
-// import * as actions from './actions'
-
-// describe('undoHistoryReducer', () => {
-//   const undoableActions = [
-//     {type:'ACTION1'},
-//     {type:'ACTION2'},
-//     {type:'ACTION3'}
-//   ]
-
-//   const initialState = reducer(undefined, {type: '@@INIT'})
-
-//   describe('addUndoItem', () => {
-//     it('adds actions to the undo queue', () => {
-//       const result = undoableActions.reduce(
-//         (state, undoableAction) => reducer(state, actions.addUndoItem(undoableAction)),
-//         initialState)
-
-//       expect(result.undoQueue).to.have.members(undoableActions)
-//     })
-
-//     it('resets the redo queue', () => {
-//       const state = {
-//         undoQueue: [],
-//         redoQueue: [undoableActions[0]]
-//       }
-
-//       const result = reducer(state, actions.addUndoItem(undoableActions[1]))
-
-//       expect(result.redoQueue).to.be.empty
-//     })
-//   })
-
-//   describe('undo', () => {
-//     it ('moves items from undoQueue to redoQueue', () => {
-//       const state = undoableActions.reduce(
-//         (state, undoableAction) => reducer(state, actions.addUndoItem(undoableAction)),
-//         initialState)
-
-//       const result = reducer(state, actions.undo())
-//       const result2 = reducer(result, actions.undo())
-
-//       expect(result.undoQueue).to.have.length(2)
-//       expect(result.undoQueue).to.include.members(take(undoableActions, 2))
-//       expect(result.redoQueue).to.have.length(1)
-//       expect(result.redoQueue).to.include(last(undoableActions))
-
-//       expect(result2.undoQueue).to.have.length(1)
-//       expect(result2.undoQueue).to.include(first(undoableActions))
-//       expect(result2.redoQueue).to.have.length(2)
-//       expect(result2.redoQueue).to.include.members(takeRight(undoableActions, 2))
-//     })
-//   })
-
-//   describe('redo', () => {
-//     it ('moves items from redoQueue to undoQueue', () => {
-//       let state = undoableActions.reduce(
-//         (state, undoableAction) => reducer(state, actions.addUndoItem(undoableAction)),
-//         initialState)
-//       state = reducer(state, actions.undo())
-//       state = reducer(state, actions.undo())
-
-//       const result = reducer(state, actions.redo())
-//       const result2 = reducer(result, actions.redo())
-
-//       expect(result.undoQueue).to.have.length(2)
-//       expect(result.undoQueue).to.include.members(take(undoableActions, 2))
-//       expect(result.redoQueue).to.have.length(1)
-//       expect(result.redoQueue).to.include(last(undoableActions))
-
-//       expect(result2.redoQueue).to.be.empty
-//       expect(result2.undoQueue).to.include.members(undoableActions)
-//     })
-//   })
-// })
