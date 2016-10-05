@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "babel src -d lib",
+    "build:watch": "npm run build -- --watch",
     "test": "mocha",
     "publish": "npm run clean && npm run build"
   },
