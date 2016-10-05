@@ -19,7 +19,7 @@ Cons:
 
 add the undoHistoryReducer to your top state
 
-```
+```js
 import {combineReducers} from 'redux'
 import {undoHistoryReducer} from 'redux-undo-redo'
 
@@ -35,7 +35,7 @@ const rootReducer = combineReducers({
 
 create undoMiddleware instance and attach it to the redux store
 
-```
+```js
 import {createUndoMiddleware} from 'redux-undo-redo'
 import {setCurrentCounter, increment, decrement, setCounterValue} from './actions'
 import {getCurrentCounter, getCurrentCounterValue} from './selectors'
@@ -59,7 +59,7 @@ createUndoMiddleware take a configuration object with the following fields:
 ### revertingActions
 this is a map between the `action type` and it's reverting action creator, the action creator gets the `payload` field of the original action.  
 if the `payload` is not enough to create a reverting action, you can provide an object like this:
-```
+```js
 {
   action: (payload, meta) => revertingActionCreator(payload.something, meta.somethingElse),
   meta: (state, payload) => ({somethingElse: state.something})
@@ -76,7 +76,41 @@ this to fields are optional
 those would be used to dispatch `setViewState` before dispatching the reverting/original action to undo/redo.  
 this is usful the result of the undoable actions depends on another part of the state.
 
+after setting up the reducer and the middleware all you need to do is dispatch the provided actions like in `redux-undo`
+```js
+import React from 'react'
+import { actions as undoActions } from 'redux-undo-redo'
+import { connect } from 'react-redux'
+
+let UndoRedo = ({ canUndo, canRedo, onUndo, onRedo }) => (
+  <p>
+    <button onClick={onUndo} disabled={!canUndo}>
+      Undo
+    </button>
+    <button onClick={onRedo} disabled={!canRedo}>
+      Redo
+    </button>
+  </p>
+)
+
+const mapStateToProps = (state) => ({
+  canUndo: state.undoHistory.undoQueue.length > 0,
+  canRedo: state.undoHistory.redoQueue.length > 0
+})
+
+const mapDispatchToProps = ({
+  onUndo: undoActions.undo,
+  onRedo: undoActions.redo
+})
+
+UndoRedo = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(UndoRedo)
+```
+
+[here](https://github.com/welldone-software/redux-undo-redo-example) is a complete example
+
 ##TODO:
 1. consider to remove usage of payload, it limits to FSA for no reason, but maybe it's a good thing?
 2. consider setting `beforeState` after `undo`
-3. create example project
