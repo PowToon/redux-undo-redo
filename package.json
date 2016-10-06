@@ -1,6 +1,6 @@
 {
   "name": "redux-undo-redo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "enables undo-redo by defining opposite actions",
   "main": "lib/index.js",
   "scripts": {
