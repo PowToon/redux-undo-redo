@@ -18,6 +18,7 @@ export default function createUndoMiddleware({getViewState, setViewState, revert
         acting = true
         setViewState && dispatch(setViewState(undoItem.afterState))
         dispatch(getUndoAction(undoItem))
+        setViewState && dispatch(setViewState(undoItem.beforeState))
         acting = false
       }
     }

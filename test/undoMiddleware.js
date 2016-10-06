@@ -99,7 +99,7 @@ describe('undoMiddleware', function() {
         counter: 4,
         viewState: true,
         undoHistory: {
-          undoQueue: [{action:increment(), beforeState: true, afterState: true, meta: undefined}],
+          undoQueue: [{action:increment(), beforeState: false, afterState: true, meta: undefined}],
           redoQueue: []
         }
       })
@@ -108,7 +108,8 @@ describe('undoMiddleware', function() {
       expect(store.getActions()).to.eql([
         undoActions.undo(),
         setViewState(true),
-        decrement()
+        decrement(),
+        setViewState(false),
       ])
     })
   })
