@@ -1,3 +1,5 @@
+import {omitBy, isNil} from 'lodash'
+
 const INITIAL_UNDO_HISTORY_STATE = {
   undoQueue: [],
   redoQueue: []
@@ -25,7 +27,7 @@ export default function undoHistoryReducer(state=INITIAL_UNDO_HISTORY_STATE, act
   case 'UNDO_HISTORY@ADD':
     {
       return {
-        undoQueue: [undoItem, ...undoQueue],
+        undoQueue: [omitBy(undoItem, isNil), ...undoQueue],
         redoQueue: []
       }
     }
