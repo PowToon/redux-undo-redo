@@ -4,7 +4,7 @@ const INITIAL_UNDO_HISTORY_STATE = {
 }
 
 export default function undoHistoryReducer(state=INITIAL_UNDO_HISTORY_STATE, action) {
-  const {payload, type} = action
+  const {type, ...undoItem} = action
   const {undoQueue, redoQueue} = state
 
   switch(type) {
@@ -25,7 +25,7 @@ export default function undoHistoryReducer(state=INITIAL_UNDO_HISTORY_STATE, act
   case 'UNDO_HISTORY@ADD':
     {
       return {
-        undoQueue: [payload, ...undoQueue],
+        undoQueue: [undoItem, ...undoQueue],
         redoQueue: []
       }
     }

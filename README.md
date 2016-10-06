@@ -44,11 +44,11 @@ const undoMiddleware = createUndoMiddleware({
   getViewState: getCurrentCounter,
   setViewState: setCurrentCounter,
   revertingActions: {
-    'INCREMENT': (payload) => decrement(),
-    'DECREMENT': (payload) => increment(),
+    'INCREMENT': (action) => decrement(),
+    'DECREMENT': (action) => increment(),
     'SET_COUNTER_VALUE': {
-      action: (payload, {oldCounterValue}) => setCounterValue(oldCounterValue),
-      meta: (state, payload) => ({oldCounterValue: getCurrentCounterValue()})
+      action: (action, {oldCounterValue}) => setCounterValue(oldCounterValue),
+      meta: (state, action) => ({oldCounterValue: getCurrentCounterValue()})
     }
   }
 })
@@ -57,12 +57,12 @@ const undoMiddleware = createUndoMiddleware({
 createUndoMiddleware take a configuration object with the following fields:
 
 ### revertingActions
-this is a map between the `action type` and it's reverting action creator, the action creator gets the `payload` field of the original action.
-if the `payload` is not enough to create a reverting action, you can provide an object like this:
+This is a map between the `action type` and it's reverting action creator, the action creator gets the original action and should return the reverting action.
+If the the original action is not enough to create a reverting action you can provide an object like this and collect the needed metadata:
 ```js
 {
-  action: (payload, meta) => revertingActionCreator(payload.something, meta.somethingElse),
-  meta: (state, payload) => ({somethingElse: state.something})
+  action: (action, meta) => revertingActionCreator(action.something, meta.somethingElse),
+  meta: (state, action) => ({somethingElse: state.something})
 }
 ```
 the `meta` function runs before the action happens and collects information needed to revert the action.
@@ -71,7 +71,7 @@ you get this as a second argument for the reverting action creator.
 ### getViewState and setViewState
 this to fields are optional
 `getViewState` is a selector like this: `(state) => derivedState`
-`setViewState` is an action creator that gets the result of `getViewState` as an argument: `(viewState) => ({type: 'SET_VIEW_STATE', payload: viewState})`
+`setViewState` is an action creator that gets the result of `getViewState` as an argument: `(viewState) => ({type: 'SET_VIEW_STATE', viewState})`
 **if you define this selector and action** the middleware will save the before and after view state of every undoable action.
 those would be used to dispatch `setViewState` before dispatching the reverting/original action to undo/redo.
 this is usful the result of the undoable actions depends on another part of the state.

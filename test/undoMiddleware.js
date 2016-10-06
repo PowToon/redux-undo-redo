@@ -8,16 +8,16 @@ const initialState = {
 
 const increment = () => ({type: 'INCREMENT'})
 const decrement = () => ({type: 'DECREMENT'})
-const setCounterVal = (val) => ({type: 'SET_COUNTER_VAL', payload: {val}})
+const setCounterVal = (viewState) => ({type: 'SET_COUNTER_VAL', viewState})
 const notUndoableAction = () => ({type: 'NOT_UNDOABLE'})
-const setViewState = viewState => ({type: 'SET_VIEW_STATE', payload: {viewState}})
+const setViewState = viewState => ({type: 'SET_VIEW_STATE', viewState})
 const getViewState = state => state.viewState
 const revertingActions = {
   'INCREMENT': () => decrement(),
   'DECREMENT': () => increment(),
   'SET_COUNTER_VAL': {
-    action: (payload, {val}) => setCounterVal(val),
-    meta: (state, payload) => ({val: state.counter})
+    action: (action, {val}) => setCounterVal(val),
+    meta: (state, action) => ({val: state.counter})
   }
 }
 const undoMiddleware = createUndoMiddleware({
