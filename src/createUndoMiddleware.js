@@ -1,4 +1,4 @@
-import {get} from 'lodash'
+import {get, includes} from 'lodash'
 import {addUndoItem} from './actions'
 import {getUndoItem, getRedoItem} from './selectors'
 
@@ -34,7 +34,7 @@ export default function createUndoMiddleware({getViewState, setViewState, revert
     }
       break
     default:
-      if (!acting && SUPPORTED_ACTIONS.includes(action.type)) {
+      if (!acting && includes(SUPPORTED_ACTIONS, action.type)) {
         dispatch(addUndoItem(
           action,
           getViewState && getViewState(state),
