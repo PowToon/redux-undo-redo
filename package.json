@@ -1,6 +1,6 @@
 {
   "name": "redux-undo-redo",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "enables undo-redo by defining opposite actions",
   "main": "lib/index.js",
   "scripts": {
@@ -31,12 +31,12 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.16.3",
     "chai": "^3.5.0",
+    "lodash": "^4.16.3",
     "mocha": "^3.1.0",
     "redux": "^3.6.0",
     "redux-mock-store": "^1.2.1",
     "rimraf": "^2.5.4"
   },
   "dependencies": {
-    "lodash": "^4.16.3"
   }
 }
