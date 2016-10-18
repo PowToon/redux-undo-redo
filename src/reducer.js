@@ -31,6 +31,8 @@ export default function undoHistoryReducer(state=INITIAL_UNDO_HISTORY_STATE, act
         redoQueue: []
       }
     }
+  case 'UNDO_HISTORY@CLEAR':
+    return INITIAL_UNDO_HISTORY_STATE
   default:
     return state
   }

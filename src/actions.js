@@ -15,3 +15,9 @@ export function addUndoItem(action, beforeState, afterState, meta) {
     meta
   }
 }
+
+export function clear() {
+  return {
+    type: 'UNDO_HISTORY@CLEAR'
+  }
+}
