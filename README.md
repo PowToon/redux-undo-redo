@@ -109,4 +109,4 @@ UndoRedo = connect(
 )(UndoRedo)
 ```
 
-[here](https://github.com/welldone-software/redux-undo-redo-example) is a complete example
+[here](https://github.com/powtoon/redux-undo-redo-example) is a complete example
