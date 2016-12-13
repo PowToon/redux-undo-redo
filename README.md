@@ -48,7 +48,7 @@ const undoMiddleware = createUndoMiddleware({
     'DECREMENT': (action) => increment(),
     'SET_COUNTER_VALUE': {
       action: (action, {oldCounterValue}) => setCounterValue(oldCounterValue),
-      meta: (state, action) => ({oldCounterValue: getCurrentCounterValue()})
+      meta: (state, action) => ({oldCounterValue: getCurrentCounterValue(state)})
     }
   }
 })
@@ -74,7 +74,7 @@ this to fields are optional
 `setViewState` is an action creator that gets the result of `getViewState` as an argument: `(viewState) => ({type: 'SET_VIEW_STATE', viewState})`
 **if you define this selector and action** the middleware will save the before and after view state of every undoable action.
 those would be used to dispatch `setViewState` before dispatching the reverting/original action to undo/redo.
-this is usful the result of the undoable actions depends on another part of the state.
+this is usful in cases where undoable actions depends on another part of the state.
 
 after setting up the reducer and the middleware all you need to do is dispatch the provided actions like in `redux-undo`
 ```js
