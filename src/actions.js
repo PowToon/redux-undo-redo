@@ -6,13 +6,13 @@ export function redo() {
   return {type: 'UNDO_HISTORY@REDO'}
 }
 
-export function addUndoItem(action, beforeState, afterState, meta) {
+export function addUndoItem(action, beforeState, afterState, createArgs) {
   return {
     type: 'UNDO_HISTORY@ADD',
     action,
     beforeState,
     afterState,
-    meta
+    createArgs
   }
 }
 

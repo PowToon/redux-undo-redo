@@ -17,7 +17,7 @@ const revertingActions = {
   'DECREMENT': () => increment(),
   'SET_COUNTER_VAL': {
     action: (action, {val}) => setCounterVal(val),
-    meta: (state, action) => ({val: state.counter})
+    createArgs: (state, action) => ({val: state.counter})
   }
 }
 const undoMiddleware = createUndoMiddleware({
@@ -54,7 +54,7 @@ describe('undoMiddleware', function() {
     ])
   })
 
-  it('dispatches UNDO_HISTORY@ADD for supported actions with metadata', function() {
+  it('dispatches UNDO_HISTORY@ADD for supported actions with args', function() {
     const store = mockStore(initialState)
     const action = setCounterVal(7)
     store.dispatch(action)
@@ -82,7 +82,7 @@ describe('undoMiddleware', function() {
         counter: 4,
         viewState: true,
         undoHistory: {
-          undoQueue: [{action:increment(), beforeState: undefined, afterState: undefined, meta: undefined}],
+          undoQueue: [{action:increment(), beforeState: undefined, afterState: undefined, args: undefined}],
           redoQueue: []
         }
       })
@@ -99,7 +99,7 @@ describe('undoMiddleware', function() {
         counter: 4,
         viewState: true,
         undoHistory: {
-          undoQueue: [{action:increment(), beforeState: false, afterState: true, meta: undefined}],
+          undoQueue: [{action:increment(), beforeState: false, afterState: true, args: undefined}],
           redoQueue: []
         }
       })
@@ -121,7 +121,7 @@ describe('undoMiddleware', function() {
         viewState: true,
         undoHistory: {
           undoQueue: [],
-          redoQueue: [{action:increment(), beforeState: undefined, afterState: undefined, meta: undefined}]
+          redoQueue: [{action:increment(), beforeState: undefined, afterState: undefined, args: undefined}]
         }
       })
       store.dispatch(undoActions.redo())
@@ -138,7 +138,7 @@ describe('undoMiddleware', function() {
         viewState: true,
         undoHistory: {
           undoQueue: [],
-          redoQueue: [{action:increment(), beforeState: true, afterState: true, meta: undefined}]
+          redoQueue: [{action:increment(), beforeState: true, afterState: true, args: undefined}]
         }
       })
       store.dispatch(undoActions.redo())

@@ -39,7 +39,7 @@ export default function createUndoMiddleware({getViewState, setViewState, revert
           action,
           getViewState && getViewState(state),
           getViewState && getViewState(getState()),
-          getUndoMetadata(state, action)
+          getUndoArgs(state, action)
         ))
       }
       break
@@ -49,17 +49,17 @@ export default function createUndoMiddleware({getViewState, setViewState, revert
   }
 
   function getUndoAction(undoItem) {
-    const {action, meta} = undoItem
+    const {action, args} = undoItem
     const {type} = action
     const actionCreator = get(revertingActions[type], 'action', revertingActions[type])
     if (!actionCreator) {
       throw new Error(`Illegal reverting action definition for '${type}'`)
     }
-    return actionCreator(action, meta)
+    return actionCreator(action, args)
   }
 
-  function getUndoMetadata(state, action) {
-    const metadataFactory = get(revertingActions[action.type], 'meta')
-    return metadataFactory && metadataFactory(state, action)
+  function getUndoArgs(state, action) {
+    const argsFactory = get(revertingActions[action.type], 'createArgs')
+    return argsFactory && argsFactory(state, action)
   }
 }
