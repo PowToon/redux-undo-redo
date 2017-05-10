@@ -5,15 +5,16 @@ Instead of setting a reducer to be undoable, we'll define which actions are undo
 
 Pros:
 
-1. Easily support multiple changes that should be treated as a single undo step. (animation, drag drop)
-2. We don't need to save the state, instead we save actions which are usually smaller in size
-3. Easily implement "undo actions list" component because we have the list of actions
-4. No change to state structure
+1. Easily support multiple changes that should be treated as a single undo step (animation, drag drop).
+2. We don't need to save the state, instead we save actions which are usually smaller in size.
+3. Easily implement "undo actions list" component because we have the list of actions.
+4. No change to state structure.
+5. Easily prevent certain actions from being added to the undo stack.
 
 Cons:
 
-1. Harder implementation than just applying high-order-reducer
-2. Developers need to be aware they need to provide reverting actions to support undo (or is it a pro?)
+1. Harder implementation than just applying high-order-reducer.
+2. Developers need to be aware they need to provide reverting actions to support undo (or is it a pro?).
 
 ## Usage
 
@@ -48,7 +49,7 @@ const undoMiddleware = createUndoMiddleware({
     'DECREMENT': (action) => increment(),
     'SET_COUNTER_VALUE': {
       action: (action, {oldCounterValue}) => setCounterValue(oldCounterValue),
-      meta: (state, action) => ({oldCounterValue: getCurrentCounterValue(state)})
+      createArgs: (state, action) => ({oldCounterValue: getCurrentCounterValue(state)})
     }
   }
 })
@@ -58,15 +59,30 @@ createUndoMiddleware take a configuration object with the following fields:
 
 ### revertingActions
 This is a map between the `action type` and it's reverting action creator, the action creator gets the original action and should return the reverting action.
-If the the original action is not enough to create a reverting action you can provide an object like this and collect the needed metadata:
+If the the original action is not enough to create a reverting action you can provide `createArgs` that will result in an `args` argument for the reverting action:
 ```js
 {
-  action: (action, meta) => revertingActionCreator(action.something, meta.somethingElse),
-  meta: (state, action) => ({somethingElse: state.something})
+  action: (action, args) => revertingActionCreator(action.something, args.somethingElse),
+  createArgs: (state, action) => ({somethingElse: state.something})
 }
 ```
-the `meta` function runs before the action happens and collects information needed to revert the action.
+the `createArgs` function runs before the action happens and collects information needed to revert the action.
 you get this as a second argument for the reverting action creator.
+
+### Make certain actions skip the undo-redo middleware
+Actions with the meta property `noUndo` will be ignored by the middleware whatsoever, even if they have a reverting action:
+```
+dispatch({
+  type: 'SOME_ACTION',
+  payload: {
+    someKey: 'someValue'
+  },
+  meta: {
+    // This will cause the action to not be undoable
+    noUndo: true 
+  }
+})
+```
 
 ### getViewState and setViewState
 this to fields are optional
