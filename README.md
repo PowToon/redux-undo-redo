@@ -5,15 +5,16 @@ Instead of setting a reducer to be undoable, we'll define which actions are undo
 
 Pros:
 
-1. Easily support multiple changes that should be treated as a single undo step. (animation, drag drop)
-2. We don't need to save the state, instead we save actions which are usually smaller in size
-3. Easily implement "undo actions list" component because we have the list of actions
-4. No change to state structure
+1. Easily support multiple changes that should be treated as a single undo step (animation, drag drop).
+2. We don't need to save the state, instead we save actions which are usually smaller in size.
+3. Easily implement "undo actions list" component because we have the list of actions.
+4. No change to state structure.
+5. Easily prevent certain actions from being added to the undo stack.
 
 Cons:
 
-1. Harder implementation than just applying high-order-reducer
-2. Developers need to be aware they need to provide reverting actions to support undo (or is it a pro?)
+1. Harder implementation than just applying high-order-reducer.
+2. Developers need to be aware they need to provide reverting actions to support undo (or is it a pro?).
 
 ## Usage
 
@@ -67,6 +68,21 @@ If the the original action is not enough to create a reverting action you can pr
 ```
 the `createArgs` function runs before the action happens and collects information needed to revert the action.
 you get this as a second argument for the reverting action creator.
+
+### Make certain actions skip the undo-redo middleware
+Actions with the meta property `noUndo` will be ignored by the middleware whatsoever, even if they have a reverting action:
+```
+dispatch({
+  type: 'SOME_ACTION',
+  payload: {
+    someKey: 'someValue'
+  },
+  meta: {
+    // This will cause the action to not be undoable
+    noUndo: true 
+  }
+})
+```
 
 ### getViewState and setViewState
 this to fields are optional
