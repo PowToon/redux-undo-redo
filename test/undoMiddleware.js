@@ -9,9 +9,14 @@ const initialState = {
 const increment = () => ({type: 'INCREMENT'})
 const decrement = () => ({type: 'DECREMENT'})
 const setCounterVal = (viewState) => ({type: 'SET_COUNTER_VAL', viewState})
+
+const incrementNoUndo = () => ({type: 'INCREMENT', meta: {noUndo: true}})
+
 const notUndoableAction = () => ({type: 'NOT_UNDOABLE'})
+
 const setViewState = viewState => ({type: 'SET_VIEW_STATE', viewState})
 const getViewState = state => state.viewState
+
 const revertingActions = {
   'INCREMENT': () => decrement(),
   'DECREMENT': () => increment(),
@@ -41,6 +46,16 @@ describe('undoMiddleware', function() {
     expect(store.getActions()).to.eql([
       action,
       undoActions.addUndoItem(action, true, true)
+    ])
+  })
+
+  it('doesn\'t dispatch UNDO_HISTORY@ADD for supported actions with "noUndo" meta property', function() {
+    const store = mockStore(initialState)
+    const action = incrementNoUndo()
+    store.dispatch(action)
+
+    expect(store.getActions()).to.eql([
+      action
     ])
   })
 
