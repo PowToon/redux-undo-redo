@@ -9,10 +9,12 @@ export function redo() {
 export function addUndoItem(action, beforeState, afterState, createArgs) {
   return {
     type: 'UNDO_HISTORY@ADD',
-    action,
-    beforeState,
-    afterState,
-    createArgs
+    payload: {
+      action,
+      beforeState,
+      afterState,
+      createArgs
+    }
   }
 }
 
