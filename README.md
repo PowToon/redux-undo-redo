@@ -68,6 +68,8 @@ If the the original action is not enough to create a reverting action you can pr
 the `createArgs` function runs before the action happens and collects information needed to revert the action.
 you get this as a second argument for the reverting action creator.
 
+*Note: "createArgs" was "meta" in previous versions of the library and changed to "createArgs" as it is clearer.* 
+
 ### getViewState and setViewState
 this to fields are optional
 `getViewState` is a selector like this: `(state) => derivedState`
