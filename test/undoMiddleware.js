@@ -65,6 +65,32 @@ describe('undoMiddleware', function() {
     ])
   })
 
+  it('dispatches UNDO_HISTORY@ADD for supported actions with args using the deprecated "meta" property', function() {
+    const deprecatedRevertingActions = {
+      'INCREMENT': () => decrement(),
+      'DECREMENT': () => increment(),
+      'SET_COUNTER_VAL': {
+        action: (action, {val}) => setCounterVal(val),
+        meta: (state, action) => ({val: state.counter})
+      }
+    }
+    const undoMiddleware = createUndoMiddleware({
+      getViewState,
+      setViewState,
+      revertingActions: deprecatedRevertingActions
+    })
+    const mockStore = configureStore([undoMiddleware])
+
+    const store = mockStore(initialState)
+    const action = setCounterVal(7)
+    store.dispatch(action)
+
+    expect(store.getActions()).to.eql([
+      action,
+      undoActions.addUndoItem(action, true, true, {val: initialState.counter})
+    ])
+  })
+
   it('dispatches UNDO_HISTORY@ADD with view states', function() {
     const store = mockStore(initialState)
     const action = setCounterVal(7)

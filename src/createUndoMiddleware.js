@@ -4,6 +4,10 @@ import {getUndoItem, getRedoItem} from './selectors'
 
 export default function createUndoMiddleware({getViewState, setViewState, revertingActions}) {
 
+  if(Object.values(revertingActions).some(revertingAction => revertingAction.meta)){
+    console.warn('[redux-undo-redo] The "meta" property in reverting actions is deprecated and replaced with "createArgs" and will be removed in future versions.')
+  }
+
   const SUPPORTED_ACTIONS = Object.keys(revertingActions)
   let acting = false
 
@@ -59,7 +63,12 @@ export default function createUndoMiddleware({getViewState, setViewState, revert
   }
 
   function getUndoArgs(state, action) {
-    const argsFactory = get(revertingActions[action.type], 'createArgs')
+    let argsFactory = get(revertingActions[action.type], 'createArgs')
+
+    if(!argsFactory){
+      argsFactory = get(revertingActions[action.type], 'meta')
+    }
+
     return argsFactory && argsFactory(state, action)
   }
 }
