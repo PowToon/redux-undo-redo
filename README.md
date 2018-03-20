@@ -48,7 +48,7 @@ const undoMiddleware = createUndoMiddleware({
     'DECREMENT': (action) => increment(),
     'SET_COUNTER_VALUE': {
       action: (action, {oldCounterValue}) => setCounterValue(oldCounterValue),
-      meta: (state, action) => ({oldCounterValue: getCurrentCounterValue(state)})
+      createArgs: (state, action) => ({oldCounterValue: getCurrentCounterValue(state)})
     }
   }
 })
@@ -58,15 +58,17 @@ createUndoMiddleware take a configuration object with the following fields:
 
 ### revertingActions
 This is a map between the `action type` and it's reverting action creator, the action creator gets the original action and should return the reverting action.
-If the the original action is not enough to create a reverting action you can provide an object like this and collect the needed metadata:
+If the the original action is not enough to create a reverting action you can provide `createArgs` that will result in an `args` argument for the reverting action:
 ```js
 {
-  action: (action, meta) => revertingActionCreator(action.something, meta.somethingElse),
-  meta: (state, action) => ({somethingElse: state.something})
+  action: (action, args) => revertingActionCreator(action.something, args.somethingElse),
+  createArgs: (state, action) => ({somethingElse: state.something})
 }
 ```
-the `meta` function runs before the action happens and collects information needed to revert the action.
+the `createArgs` function runs before the action happens and collects information needed to revert the action.
 you get this as a second argument for the reverting action creator.
+
+*Note: "createArgs" was "meta" in previous versions of the library and changed to "createArgs" as it is clearer.* 
 
 ### getViewState and setViewState
 this to fields are optional
