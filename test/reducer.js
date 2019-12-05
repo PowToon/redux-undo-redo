@@ -1,4 +1,10 @@
-import {undoHistoryReducer, actions} from '../src'
+import {undoHistoryReducerCreator, actions} from '../src'
+
+const UNDO_MEMORY_LIMIT_NUMBER = 3
+
+const undoHistoryReducer = undoHistoryReducerCreator({
+  undoHistoryLimit: UNDO_MEMORY_LIMIT_NUMBER
+})
 
 describe('undoHistoryReducer', function() {
   describe('UNDO_HISTORY@ADD', function() {
@@ -51,6 +57,33 @@ describe('undoHistoryReducer', function() {
 
       expect(result).to.eql(expectedState)
     })
+  })
+
+  it('adds items to the undo queue in reverse order, and removes the oldest when reaches the limit', function() {
+    const initialState = {
+      undoQueue: [],
+      redoQueue: []
+    }
+    const undoableActions = [
+      {type: 'ACTION1'},
+      {type: 'ACTION2'},
+      {type: 'ACTION3'},
+      {type: 'ACTION4'}
+    ]
+    const expectedState = {
+      undoQueue: [
+        {action: {type:'ACTION4'}},
+        {action: {type:'ACTION3'}},
+        {action: {type:'ACTION2'}}
+      ],
+      redoQueue: []
+    }
+
+    const result = undoableActions.reduce(
+      (state, action) => undoHistoryReducer(state, actions.addUndoItem(action)),
+      initialState)
+
+    expect(result).to.eql(expectedState)
   })
 
   describe('UNDO_HISTORY@UNDO', function() {

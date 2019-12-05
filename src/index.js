@@ -1,3 +1,3 @@
 export createUndoMiddleware from './createUndoMiddleware'
-export undoHistoryReducer from './reducer'
+export undoHistoryReducer, {undoHistoryReducerCreator} from './reducer'
 export * as actions from './actions'
