@@ -112,3 +112,20 @@ UndoRedo = connect(
 ```
 
 [here](https://github.com/powtoon/redux-undo-redo-example) is a complete example
+
+### Limit the undo history
+You can limit the number of undo operations stored by the reducer, by using `createUndoHistoryReducer` and passing in the limit:
+```js
+import {combineReducers} from 'redux'
+import {createUndoHistoryReducer} from 'redux-undo-redo'
+import {appReducer} from './app'
+import {someOtherReducer} from './someOtherModule'
+
+const UNDO_HISTORY_LIMIT = 20
+
+const rootReducer = combineReducers({
+  app: appReducer,
+  other: someOtherReducer,
+  undoHistory: createUndoHistoryReducer(UNDO_HISTORY_LIMIT)
+})
+```
